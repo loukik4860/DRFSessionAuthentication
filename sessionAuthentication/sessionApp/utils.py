@@ -9,7 +9,7 @@ def send_activation_email(recipient_email, activation_url):
     from_email = settings.EMAIL_HOST_USER
     to = [recipient_email]
     # Load HTML template
-    html_content = render_to_string('account/activation_email.html', {'activation_url': activation_url})
+    html_content = render_to_string('sessionApp/activation_email.html', {'activation_url': activation_url})
     # Create the email body with both HTML and plain text version
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)

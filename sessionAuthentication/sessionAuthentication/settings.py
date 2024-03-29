@@ -45,7 +45,7 @@ ROOT_URLCONF = "sessionAuthentication.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["sessionApp/template"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -129,11 +129,25 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_HOST_USER = "loukikhajare22@gmail.com"
+EMAIL_HOST_PASSWORD = "jbtedqrodreoclvf"
 
 # To Use Custom User Model
 AUTH_USER_MODEL = "sessionApp.User"
 
 SITE_DOMAIN = "http://localhost:8000"
 SITE_NAME = "Local Host"
+
+
+REST_FRAMEWORK = {
+    # Enable session authentication
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #         'rest_framework.renderers.JSONRenderer',
+    #     ]
+}
