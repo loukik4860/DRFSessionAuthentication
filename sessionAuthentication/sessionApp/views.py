@@ -95,6 +95,16 @@ class ResetPasswordEmailView(APIView):
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
 
+class ResetPasswordConfirmView(APIView):
+    permission_classes = [AllowAny]
+    def post(self,request):
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+
+        if not uid or not token:
+            return Response({'detail':'Missing uid or token'},status=status.HTTP_400_BAD_REQUEST)
+
+
 @method_decorator(csrf_protect, name='dispatch')
 class loginView(APIView):
     permission_classes = [AllowAny]
