@@ -13,7 +13,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
-from .utils import send_activation_email
+from .utils import send_activation_email, send_reset_password_email
 
 
 # Create your views here.
@@ -74,6 +74,27 @@ class Activation_Confirm(APIView):
             return Response({'details': 'Invalid activation link'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ResetPasswordEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not User.objects.filter(email=email).exists():
+            return Response({'details': 'User with this email already exist'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.get(email=email)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        reset_link = reverse('reset_password', kwargs={'uid': uid, 'token': token})
+        reset_url = f"{settings.SITE_DOMAIN}{reset_link}"
+        send_reset_password_email(user.email, reset_url)
+        return Response({'detail': 'Password reset email sent successfully'}, status=status.HTTP_200_OK)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
 @method_decorator(csrf_protect, name='dispatch')
 class loginView(APIView):
     permission_classes = [AllowAny]
@@ -100,12 +121,12 @@ class UserDetailsView(APIView):
         data['is_staff'] = request.user.is_staff
         return Response(data)
 
-    def patch(self,request):
-        serializer = UserSerializer(request.user,data=request.data,partial=True)
+    def patch(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
@@ -115,15 +136,21 @@ class LogoutView(APIView):
 
 
 class ChangePassword(APIView):
-    def post(self,request):
+    def post(self, request):
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
 
         user = request.user
 
         if not user.check_password(old_password):
-            return Response({'details':'Invalid old Password'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'details': 'Invalid old Password'}, status=status.HTTP_400_BAD_REQUEST)
         user.set_password(new_password)
         user.save()
-        return Response({'details':'password changed successfully'},status=status.HTTP_200_OK)
+        return Response({'details': 'password changed successfully'}, status=status.HTTP_200_OK)
 
+
+class DeleteAccountView(APIView):
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'details': 'Account deleted successfully'}, status=status.HTTP_404_NOT_FOUND)

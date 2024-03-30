@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import RegistrationView, ActivateView, Activation_Confirm, getCSRFToken,\
-    loginView,LogoutView,UserDetailsView,ChangePassword
+    loginView,LogoutView,UserDetailsView,ChangePassword,DeleteAccountView
 
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path("account/user/", UserDetailsView.as_view(), name="userDetails"),
     path("account/changePassword/",ChangePassword.as_view(),name="changepassword"),
     path("account/logout/", LogoutView.as_view(), name="Logout"),
+    path("account/delete/", DeleteAccountView.as_view(), name="deleteAccount"),
 ]
