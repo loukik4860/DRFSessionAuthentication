@@ -95,14 +95,30 @@ class ResetPasswordEmailView(APIView):
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
 
+
 class ResetPasswordConfirmView(APIView):
     permission_classes = [AllowAny]
-    def post(self,request):
+
+    def post(self, request):
         uid = request.data.get('uid')
         token = request.data.get('token')
 
         if not uid or not token:
-            return Response({'detail':'Missing uid or token'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Missing uid or token'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+            if default_token_generator.check_token(user, token):
+                new_password = request.data.get('new_password')
+                if not new_password:
+                    return Response({'detail': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+                user.set_password(new_password)
+                user.save()
+                return Response({'detail': 'Password reset successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid reset password link'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid reset password link'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(csrf_protect, name='dispatch')
