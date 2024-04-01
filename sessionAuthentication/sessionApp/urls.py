@@ -1,17 +1,14 @@
 from django.urls import path, include
-<<<<<<< HEAD
 from .views import RegistrationView, ActivateView, Activation_Confirm, getCSRFToken, \
     loginView, LogoutView, UserDetailsView, ChangePassword, DeleteAccountView, ResetPasswordEmailView, \
     ResetPasswordConfirmView, ResetPasswordView
-=======
-from .views import RegistrationView,ActivateView,Activation_Confirm,getCSRFToken
->>>>>>> master
+from .views import RegistrationView, ActivateView, Activation_Confirm, getCSRFToken
 
 urlpatterns = [
     path("account/csrf_cookies/", getCSRFToken.as_view(), name="csrf_cookies"),
     path("account/registration/", RegistrationView.as_view(), name="register"),
     path("account/active/<str:uid>/<str:token>/", ActivateView.as_view(), name="activate"),
-<<<<<<< HEAD
+
     path("account/active/", Activation_Confirm.as_view(), name="activateConfirm"),
     path("account/login/", loginView.as_view(), name="loginView"),
     path("account/user/", UserDetailsView.as_view(), name="userDetails"),
@@ -21,7 +18,5 @@ urlpatterns = [
     path("account/reset_password/", ResetPasswordEmailView.as_view(), name="resetPasswordEmail"),
     path("account/reset_password/<str:uid>/<str:token>/", ResetPasswordView.as_view(), name="resetPassword"),
     path("account/reset_password_confirm/", ResetPasswordConfirmView.as_view(), name="resetPasswordConfirm"),
-=======
     path("account/active/", Activation_Confirm.as_view(), name="activateConfirm")
->>>>>>> master
 ]
