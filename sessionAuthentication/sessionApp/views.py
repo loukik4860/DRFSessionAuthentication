@@ -13,7 +13,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
-from .utils import send_activation_email
+from .utils import send_activation_email, send_reset_password_email
 
 
 # Create your views here.
@@ -24,6 +24,17 @@ class getCSRFToken(APIView):
 
     def get(self, request):
         return Response({'success': 'csrf Cookies set'})
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class CheckAuthenticatedView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response({'isAuthenticated': True})
+        else:
+            return Response({'isAuthenticated': False})
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -72,3 +83,111 @@ class Activation_Confirm(APIView):
                 return Response({'details': 'Invalid Activation link'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'details': 'Invalid activation link'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPasswordEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not User.objects.filter(email=email).exists():
+            return Response({'details': 'User with this email does not exists '}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.get(email=email)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        reset_link = reverse('resetPassword', kwargs={'uid': uid, 'token': token})
+        reset_url = f"{settings.SITE_DOMAIN}{reset_link}"
+        send_reset_password_email(user.email, reset_url)
+        return Response({'detail': 'Password reset email sent successfully'}, status=status.HTTP_200_OK)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+
+class ResetPasswordConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+
+        if not uid or not token:
+            return Response({'detail': 'Missing uid or token'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+            if default_token_generator.check_token(user, token):
+                new_password = request.data.get('new_password')
+                if not new_password:
+                    return Response({'detail': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+                user.set_password(new_password)
+                user.save()
+                return Response({'detail': 'Password reset successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid reset password link'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid reset password link'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class loginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        print("email", email)
+        password = request.data.get('password')
+        print("password", password)
+        user = authenticate(request, email=email, password=password)
+        print("user", user)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return Response({'details': 'Logged in Successfully.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'details': 'Email or password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserDetailsView(APIView):
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        data = serializer.data
+        data['is_staff'] = request.user.is_staff
+        return Response(data)
+
+    def patch(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({'details': 'Logged out successfully.'}, status=status.HTTP_200_OK)
+
+
+class ChangePassword(APIView):
+    def post(self, request):
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        user = request.user
+
+        if not user.check_password(old_password):
+            return Response({'details': 'Invalid old Password'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        return Response({'details': 'password changed successfully'}, status=status.HTTP_200_OK)
+
+
+class DeleteAccountView(APIView):
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'details': 'Account deleted successfully'}, status=status.HTTP_404_NOT_FOUND)
