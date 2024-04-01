@@ -27,6 +27,7 @@ class getCSRFToken(APIView):
 
 
 @method_decorator(csrf_protect, name='dispatch')
+<<<<<<< HEAD
 class CheckAuthenticatedView(APIView):
     permission_classes = [AllowAny]
 
@@ -38,6 +39,8 @@ class CheckAuthenticatedView(APIView):
 
 
 @method_decorator(csrf_protect, name='dispatch')
+=======
+>>>>>>> master
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
 
@@ -83,6 +86,7 @@ class Activation_Confirm(APIView):
                 return Response({'details': 'Invalid Activation link'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'details': 'Invalid activation link'}, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
 
 
 class ResetPasswordEmailView(APIView):
@@ -191,3 +195,5 @@ class DeleteAccountView(APIView):
         user = request.user
         user.delete()
         return Response({'details': 'Account deleted successfully'}, status=status.HTTP_404_NOT_FOUND)
+=======
+>>>>>>> master
