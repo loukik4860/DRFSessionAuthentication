@@ -27,6 +27,17 @@ class getCSRFToken(APIView):
 
 
 @method_decorator(csrf_protect, name='dispatch')
+class CheckAuthenticatedView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response({'isAuthenticated': True})
+        else:
+            return Response({'isAuthenticated': False})
+
+
+@method_decorator(csrf_protect, name='dispatch')
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
 
@@ -81,11 +92,11 @@ class ResetPasswordEmailView(APIView):
         email = request.data.get('email')
 
         if not User.objects.filter(email=email).exists():
-            return Response({'details': 'User with this email already exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'details': 'User with this email does not exists '}, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.get(email=email)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        reset_link = reverse('reset_password', kwargs={'uid': uid, 'token': token})
+        reset_link = reverse('resetPassword', kwargs={'uid': uid, 'token': token})
         reset_url = f"{settings.SITE_DOMAIN}{reset_link}"
         send_reset_password_email(user.email, reset_url)
         return Response({'detail': 'Password reset email sent successfully'}, status=status.HTTP_200_OK)

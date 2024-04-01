@@ -24,7 +24,7 @@ def send_reset_password_email(recipient_email, reset_url):
 
     # load HTML template content
 
-    html_content = render_to_string('account/reset_password_email.html', {'reset_url': reset_url})
+    html_content = render_to_string('sessionApp/reset_password_email.html', {'reset_url': reset_url})
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, 'text/html')
