@@ -1,0 +1,60 @@
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 24d1ad3..ff12505 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -25,22 +25,20 @@[m [mThe Django Rest Framework (DRF) Session Authentication Repository is a component[m
+ [m
+ ## Usage[m
+ [m
+[31m-<<<<<<< HEAD[m
+[31m-1. Register a new user by making a POST request to          [m
+[31m-            /api/account/registration/.[m
+[31m-2. Activate the user's account by visiting the activation link sent to the registered email.[m
+[31m-3. Confirm the activation by making a POST request to [m
+[31m-         /api/account/activate/ with the activation token.[m
+[31m-=======[m
+[31m-1. Register a new user by making a POST request to /api/account/registration/.[m
+[32m+[m
+[32m+[m[32m1. Register a new user by making a POST request to  /api/account/registration/.[m
+ 2. Activate the user's account by visiting the activation link sent to the registered email.[m
+[31m-3. Confirm the activation by making a POST request to /api/account/activate/ with the activation token.[m
+[31m->>>>>>> master[m
+[32m+[m[32m3. Confirm the activation by making a POST request to  /api/account/activate/ with the activation token.[m
+[32m+[m[32m4. Register a new user by making a POST request to /api/account/registration/.[m
+[32m+[m[32m5. Activate the user's account by visiting the activation link sent to the registered email.[m
+[32m+[m[32m6. Confirm the activation by making a POST request to /api/account/activate/ with the activation token.[m
+[32m+[m
+[32m+[m
+ 4. Enjoy using the application![m
+ [m
+ ## API Endpoints[m
+ [m
+[31m-<<<<<<< HEAD[m
+[32m+[m
+ *    / api / account / registration /                          :- _Register a new user._[m
+ *   / api /account /activate / <<str:uid>> / <<str:token>> /   :- Activate user's account.[m
+ *   / api / account / active /                                 : Confirm user's activation.[m
+[36m@@ -48,7 +46,7 @@[m [mThe Django Rest Framework (DRF) Session Authentication Repository is a component[m
+ * /api/account/registration/                         : Register a new user.[m
+ * /api/account/activate/<<str:uid>>/<<str:token>>/   :- Activate user's account.[m
+ * /api/account/active/                               : Confirm user's activation.[m
+[31m->>>>>>> master[m
+[32m+[m
+ [m
+ ## Configuration[m
+ * Ensure that your email settings in settings.py are correctly configured for sending activation emails.[m
+[1mdiff --git a/sessionAuthentication/sessionApp/__pycache__/serializers.cpython-312.pyc b/sessionAuthentication/sessionApp/__pycache__/serializers.cpython-312.pyc[m
+[1mindex 64192f8..fdbd0d9 100644[m
+Binary files a/sessionAuthentication/sessionApp/__pycache__/serializers.cpython-312.pyc and b/sessionAuthentication/sessionApp/__pycache__/serializers.cpython-312.pyc differ
+[1mdiff --git a/sessionAuthentication/sessionApp/__pycache__/urls.cpython-312.pyc b/sessionAuthentication/sessionApp/__pycache__/urls.cpython-312.pyc[m
+[1mindex 0aef160..64addd2 100644[m
+Binary files a/sessionAuthentication/sessionApp/__pycache__/urls.cpython-312.pyc and b/sessionAuthentication/sessionApp/__pycache__/urls.cpython-312.pyc differ
+[1mdiff --git a/sessionAuthentication/sessionApp/__pycache__/utils.cpython-312.pyc b/sessionAuthentication/sessionApp/__pycache__/utils.cpython-312.pyc[m
+[1mindex 1ab0f35..4e4cd4e 100644[m
+Binary files a/sessionAuthentication/sessionApp/__pycache__/utils.cpython-312.pyc and b/sessionAuthentication/sessionApp/__pycache__/utils.cpython-312.pyc differ
+[1mdiff --git a/sessionAuthentication/sessionApp/__pycache__/views.cpython-312.pyc b/sessionAuthentication/sessionApp/__pycache__/views.cpython-312.pyc[m
+[1mindex e29bada..0e82b6a 100644[m
+Binary files a/sessionAuthentication/sessionApp/__pycache__/views.cpython-312.pyc and b/sessionAuthentication/sessionApp/__pycache__/views.cpython-312.pyc differ
+[1mdiff --git a/sessionAuthentication/sessionAuthentication/__pycache__/settings.cpython-312.pyc b/sessionAuthentication/sessionAuthentication/__pycache__/settings.cpython-312.pyc[m
+[1mindex 109a336..24e4f61 100644[m
+Binary files a/sessionAuthentication/sessionAuthentication/__pycache__/settings.cpython-312.pyc and b/sessionAuthentication/sessionAuthentication/__pycache__/settings.cpython-312.pyc differ

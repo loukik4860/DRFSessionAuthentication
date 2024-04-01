@@ -34,7 +34,7 @@ The Django Rest Framework (DRF) Session Authentication Repository is a component
 6. Confirm the activation by making a POST request to /api/account/activate/ with the activation token.
 
 
-4. Enjoy using the application!
+7. Enjoy using the application!
 
 ## API Endpoints
 
